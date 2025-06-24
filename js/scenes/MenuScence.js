@@ -14,6 +14,9 @@ export default class MenuScene extends Phaser.Scene {
         this.bg = this.add.image(width / 2, height / 2, 'background');
         this.bg.setDisplaySize(width, height);
 
+        // Debug text to confirm scene loaded
+        this.add.text(10, 10, 'MenuScene Loaded', { fontSize: '16px', fill: '#fff' });
+
         // Add title text
         this.titleText = this.add.text(width / 2, 150, 'MOVEmentum', {
             fontSize: '64px',
