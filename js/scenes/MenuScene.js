@@ -8,14 +8,12 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     create() {
-        const { width, height } = this.scale;
+        const width = this.scale.width;
+        const height = this.scale.height;
 
         // Add background image
         this.bg = this.add.image(width / 2, height / 2, 'background');
         this.bg.setDisplaySize(width, height);
-
-        // Debug text to confirm scene loaded
-        this.add.text(10, 10, 'MenuScene Loaded', { fontSize: '16px', fill: '#fff' });
 
         // Add title text
         this.titleText = this.add.text(width / 2, 150, 'MOVEmentum', {
@@ -42,7 +40,8 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     resize(gameSize) {
-        const { width, height } = gameSize;
+        const width = gameSize.width;
+        const height = gameSize.height;
 
         this.bg.setDisplaySize(width, height);
         this.titleText.setPosition(width / 2, 150);
