@@ -1,12 +1,10 @@
-const Pose = window.Pose;
-const Camera = window.Camera;
-
 export default class CameraScene extends Phaser.Scene {
     constructor() {
         super("CameraScene");
         this.keypoints = null;
         this.starRadius = 80;
         this.score = 0;
+        this.hasTransitioned = false; // flag to prevent multiple transitions
     }
 
     preload() {
@@ -17,6 +15,7 @@ export default class CameraScene extends Phaser.Scene {
     }
 
     create() {
+        this.hasTransitioned = false; // reset flag on create
         const { width, height } = this.scale;
 
         // Create hidden video element
@@ -50,7 +49,7 @@ export default class CameraScene extends Phaser.Scene {
         });
         this.cameraFeed.start();
 
-        // Animation frames (example)
+        // Animation frames
         this.animationFrames = [];
         for (let i = 1; i <= 12; i++) {
             this.animationFrames.push(`frame${i}`);
@@ -62,7 +61,6 @@ export default class CameraScene extends Phaser.Scene {
         this.catSprite = this.add.image(0, 0, this.animationFrames[0]).setDisplaySize(64, 64);
         this.catSprite.setFlipX(true);
 
-        // Example star sprite
         this.star = this.add.image(width / 2, height / 2, "star").setDisplaySize(this.starRadius * 2, this.starRadius * 2);
 
         this.poseGraphics = this.add.graphics();
@@ -161,8 +159,22 @@ export default class CameraScene extends Phaser.Scene {
                 const fillWidth = (this.score / 10) * this.progressBarBg.width;
                 this.progressBarFill.width = fillWidth;
 
-                if (this.score >= 10) {
+                if (this.score >= 10 && !this.hasTransitioned) {
+                    this.hasTransitioned = true;
                     this.score = 0;
+
+                    // Stop camera feed and clean up
+                    if (this.cameraFeed && typeof this.cameraFeed.stop === 'function') {
+                        this.cameraFeed.stop();
+                    }
+
+                    if (this.video) {
+                        this.video.pause();
+                        this.video.srcObject = null;
+                        this.video.remove();
+                        this.video = null;
+                    }
+
                     this.scene.start('MenuScene');
                 }
             }
@@ -170,40 +182,37 @@ export default class CameraScene extends Phaser.Scene {
             this.poseGraphics.clear();
 
             this.poseGraphics.fillStyle(0x00ff00, 1);
-            this.keypoints.forEach(kp => {
-                if (kp.visibility > 0.1) {
+            // Draw only the six finger keypoints
+            const fingerIndicesToDraw = [4, 20, 22, 8, 21, 23];
+            fingerIndicesToDraw.forEach(i => {
+                const kp = this.keypoints[i];
+                if (kp && kp.visibility > 0.1) {
                     const x = width - kp.x * width;
                     const y = kp.y * height;
                     this.poseGraphics.fillCircle(x, y, 4);
                 }
             });
 
-            this.poseGraphics.lineStyle(2, 0x00ffff, 1);
-            const connections = [
-                [11, 13], [13, 15],
-                [12, 14], [14, 16],
-                [11, 12],
-                [23, 24],
-                [23, 25], [25, 27],
-                [24, 26], [26, 28],
-            ];
-            connections.forEach(([a, b]) => {
-                const kpA = this.keypoints[a];
-                const kpB = this.keypoints[b];
-                if (kpA.visibility > 0.1 && kpB.visibility > 0.1) {
-                    const x1 = width - kpA.x * width;
-                    const y1 = kpA.y * height;
-                    const x2 = width - kpB.x * width;
-                    const y2 = kpB.y * height;
-                    this.poseGraphics.strokeLineShape(new Phaser.Geom.Line(x1, y1, x2, y2));
-                }
-            });
+            // Removed drawing of connections and other keypoints
 
             this.children.bringToTop(this.poseGraphics);
             this.children.bringToTop(this.progressBarBg);
             this.children.bringToTop(this.progressBarFill);
             this.children.bringToTop(this.progressBarLabel);
             this.children.bringToTop(this.progressBarOutline);
+        }
+    }
+
+    shutdown() {
+        // Called when scene is stopped or switched
+        if (this.cameraFeed && typeof this.cameraFeed.stop === 'function') {
+            this.cameraFeed.stop();
+        }
+        if (this.video) {
+            this.video.pause();
+            this.video.srcObject = null;
+            this.video.remove();
+            this.video = null;
         }
     }
 }
