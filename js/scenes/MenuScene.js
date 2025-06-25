@@ -4,7 +4,7 @@ export default class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('background', 'assets/images/logo.png');
+        this.load.image('background', 'assets/images/logo2.png');
     }
 
     create() {
@@ -15,12 +15,12 @@ export default class MenuScene extends Phaser.Scene {
         this.bg = this.add.image(width / 2, height / 2, 'background');
         this.bg.setDisplaySize(width, height);
 
-        // Add title text
-        this.titleText = this.add.text(width / 2, 150, 'MOVEmentum', {
-            fontSize: '64px',
-            fill: '#ffffff',
-            fontFamily: 'Arial'
-        }).setOrigin(0.5);
+        // // Add title text
+        // this.titleText = this.add.text(width / 2, 150, 'MOVEmentum', {
+        //     fontSize: '64px',
+        //     fill: '#ffffff',
+        //     fontFamily: 'Arial'
+        // }).setOrigin(0.5);
 
         // Create PLAY button
         this.playButton = this.add.rectangle(width / 2, height / 2 + 200, 200, 80, 0x4682B4);
@@ -32,7 +32,7 @@ export default class MenuScene extends Phaser.Scene {
 
         this.playButton.setInteractive({ useHandCursor: true });
         this.playButton.on('pointerdown', () => {
-            this.scene.start('CameraScene');
+            this.scene.start('Scene1');
         });
 
         // Handle resize
@@ -44,7 +44,11 @@ export default class MenuScene extends Phaser.Scene {
         const height = gameSize.height;
 
         this.bg.setDisplaySize(width, height);
-        this.titleText.setPosition(width / 2, 150);
+
+        if (this.titleText) {
+            this.titleText.setPosition(width / 2, 150);
+        }
+
         this.playButton.setPosition(width / 2, height / 2 + 200);
         this.playText.setPosition(width / 2, height / 2 + 200);
     }

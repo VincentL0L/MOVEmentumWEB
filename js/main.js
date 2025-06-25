@@ -1,4 +1,6 @@
 import MenuScene from './scenes/MenuScene.js';
+import Scene1 from './scenes/Scene1.js';
+import Scene2 from './scenes/Scene2.js';
 import CameraScene from './scenes/CameraScene.js'; // ← Add this line
 
 const config = {
@@ -7,7 +9,7 @@ const config = {
   height: 982,
   backgroundColor: '#000000',
   parent: 'game-container',
-  scene: [MenuScene, CameraScene], // ← Include CameraScene here
+  scene: [MenuScene, Scene1, Scene2, CameraScene], // ← Include Scene1 here
   scale: {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
