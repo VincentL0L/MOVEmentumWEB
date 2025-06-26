@@ -208,7 +208,7 @@ export default class CameraScene extends Phaser.Scene {
                     this.hasTransitioned = true;
                     this.score = 0;
 
-                    this.scene.start('MenuScene');
+                    this.scene.start('VideoScene1');
                 }
             }
 
