@@ -12,6 +12,7 @@ export default class CameraScene extends Phaser.Scene {
         for (let i = 1; i <= 12; i++) {
             this.load.image(`frame${i}`, `assets/images/16bit-${i}.png`);
         }
+        this.load.audio("bgm", "assets/audio/star.mp3");
     }
 
     cleanup() {
@@ -35,10 +36,20 @@ export default class CameraScene extends Phaser.Scene {
             this.poseGraphics.destroy();
             this.poseGraphics = null;
         }
+        if (this.backgroundMusic) {
+            this.backgroundMusic.stop();
+            this.backgroundMusic.destroy();
+            this.backgroundMusic = null;
+        }
     }
 
     create() {
         this.cleanup(); // ensure no leftover video or camera feed
+        this.backgroundMusic = this.sound.add("bgm", {
+            loop: true,
+            volume: 0.5
+        });
+        this.backgroundMusic.play();
         this.hasTransitioned = false; // reset flag on create
         const { width, height } = this.scale;
 
@@ -225,6 +236,6 @@ export default class CameraScene extends Phaser.Scene {
 
     shutdown() {
         // Called when scene is stopped or switched
-        this.cleanup();
+        //this.cleanup();
     }
 }

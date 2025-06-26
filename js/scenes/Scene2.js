@@ -26,7 +26,7 @@ export default class Scene2 extends Phaser.Scene {
 
         button.setInteractive({ useHandCursor: true });
         button.on('pointerdown', () => {
-            localStorage.setItem('currentScene', 'Scene3');
+            //localStorage.setItem('currentScene', 'Scene3');
             this.scene.start('Scene3');
         });
     }
