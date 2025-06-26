@@ -31,6 +31,10 @@ export default class CameraScene extends Phaser.Scene {
             this.videoTexture.destroy();
             this.videoTexture = null;
         }
+        if (this.videoSprite) {
+            this.videoSprite.destroy();
+            this.videoSprite = null;
+        }
         if (this.poseGraphics) {
             this.poseGraphics.clear();
             this.poseGraphics.destroy();
@@ -119,6 +123,7 @@ export default class CameraScene extends Phaser.Scene {
         this.progressBarOutline.setDepth(1003);
 
         this.scale.on('resize', this.handleResize, this);
+        this.events.on('shutdown', this.cleanup, this);
     }
 
     handleResize(gameSize) {
@@ -152,7 +157,7 @@ export default class CameraScene extends Phaser.Scene {
         }
         const { width, height } = this.scale;
 
-        if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+        if (this.video && this.video.readyState === this.video.HAVE_ENOUGH_DATA && this.videoTexture && this.videoSprite) {
             this.videoCtx.drawImage(this.video, 0, 0, width, height);
             this.videoTexture.refresh();
         }
@@ -203,26 +208,26 @@ export default class CameraScene extends Phaser.Scene {
                     this.hasTransitioned = true;
                     this.score = 0;
 
-                    this.cleanup();
-
-                    this.scene.stop();
-                    this.scene.start('VideoScene1');
+                    this.scene.start('MenuScene');
                 }
             }
 
-            this.poseGraphics.clear();
-
-            this.poseGraphics.fillStyle(0x00ff00, 1);
-            // Draw only the seven finger keypoints
-            const fingerIndicesToDraw = [16, 17, 18, 19, 20, 21, 22];
-            fingerIndicesToDraw.forEach(i => {
-                const kp = this.keypoints[i];
-                if (kp && kp.visibility > 0.1) {
-                    const x = width - kp.x * width;
-                    const y = kp.y * height;
-                    this.poseGraphics.fillCircle(x, y, 4);
+            if (this.poseGraphics) {
+                this.poseGraphics.clear();
+                if (this.poseGraphics.fillStyle) {
+                    this.poseGraphics.fillStyle(0x00ff00, 1);
                 }
-            });
+                // Draw only the seven finger keypoints
+                const fingerIndicesToDraw = [16, 17, 18, 19, 20, 21, 22];
+                fingerIndicesToDraw.forEach(i => {
+                    const kp = this.keypoints[i];
+                    if (kp && kp.visibility > 0.1) {
+                        const x = width - kp.x * width;
+                        const y = kp.y * height;
+                        this.poseGraphics.fillCircle(x, y, 4);
+                    }
+                });
+            }
 
             // Removed drawing of connections and other keypoints
 
@@ -235,7 +240,6 @@ export default class CameraScene extends Phaser.Scene {
     }
 
     shutdown() {
-        // Called when scene is stopped or switched
-        //this.cleanup();
+        this.cleanup();
     }
 }

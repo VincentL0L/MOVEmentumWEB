@@ -1,40 +1,36 @@
 export default class VideoScene1 extends Phaser.Scene {
   constructor() {
-    super("VideoScene1");
+    super('VideoScene1');
   }
 
   preload() {
-    // Load video from assets folder
-    // Phaser supports mp4/webm, but MOV support depends on browser
-    // You might want to convert MOV to mp4 for better compatibility
-    this.load.video('collectedVideo', 'assets/videos/collected.mov', 'loadeddata', false, true);
+    this.load.video('collectedVideo', 'assets/videos/collected.mp4', 'loadeddata', false, true);
   }
 
   create() {
     const { width, height } = this.scale;
+    console.log('VideoScene1 created');
 
-    // Add the video game object centered on screen
     this.video = this.add.video(width / 2, height / 2, 'collectedVideo');
-
-    // Scale to fit screen while preserving aspect ratio
-    const videoRatio = this.video.videoWidth / this.video.videoHeight;
-    const screenRatio = width / height;
-
-    if (screenRatio > videoRatio) {
-      // Screen is wider than video, scale by height
-      this.video.setDisplaySize(height * videoRatio, height);
-    } else {
-      // Screen is taller than video, scale by width
-      this.video.setDisplaySize(width, width / videoRatio);
-    }
-
     this.video.setOrigin(0.5);
 
-    // Play video once
+    this.video.on('play', () => {
+      console.log('Video loaded and playing');
+      const videoRatio = this.video.video.videoWidth / this.video.video.videoHeight;
+      const screenRatio = width / height;
+
+      if (screenRatio > videoRatio) {
+        this.video.setDisplaySize(height * videoRatio, height);
+      } else {
+        this.video.setDisplaySize(width, width / videoRatio);
+      }
+    });
+
     this.video.play(false);
 
-    // Listen for video completion to transition back
-    this.video.on('complete', () => {
+    // Listen on HTML5 video element for ended event
+    this.video.video.addEventListener('ended', () => {
+      console.log('Video ended, switching to MenuScene');
       this.scene.start('MenuScene');
     });
   }
