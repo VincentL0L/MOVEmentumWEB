@@ -27,7 +27,6 @@ export default class Scene3 extends Phaser.Scene {
         button.setInteractive({ useHandCursor: true });
         button.on('pointerdown', () => {
             console.log('Star button clicked in Scene3');
-            localStorage.setItem('currentScene', 'CameraScene');
             this.scene.start('CameraScene');
         });
     }

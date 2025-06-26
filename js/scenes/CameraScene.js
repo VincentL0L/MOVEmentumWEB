@@ -14,7 +14,31 @@ export default class CameraScene extends Phaser.Scene {
         }
     }
 
+    cleanup() {
+        if (this.cameraFeed && typeof this.cameraFeed.stop === 'function') {
+            this.cameraFeed.stop();
+            this.cameraFeed = null;
+        }
+        if (this.video) {
+            this.video.pause();
+            this.video.srcObject = null;
+            this.video.remove();
+            this.video = null;
+        }
+        if (this.videoTexture) {
+            this.videoTexture.clear();
+            this.videoTexture.destroy();
+            this.videoTexture = null;
+        }
+        if (this.poseGraphics) {
+            this.poseGraphics.clear();
+            this.poseGraphics.destroy();
+            this.poseGraphics = null;
+        }
+    }
+
     create() {
+        this.cleanup(); // ensure no leftover video or camera feed
         this.hasTransitioned = false; // reset flag on create
         const { width, height } = this.scale;
 
@@ -95,14 +119,16 @@ export default class CameraScene extends Phaser.Scene {
         const barX = (width - barWidth) / 2;
         const barY = height - 40;
 
-        this.progressBarBg.setPosition(barX, barY).setSize(barWidth, barHeight);
-        this.progressBarFill.setPosition(barX, barY);
-        this.progressBarFill.width = (this.score / 10) * barWidth;
-        this.progressBarLabel.setPosition(barX, barY - 30);
+        if (this.progressBarBg && this.progressBarFill && this.progressBarLabel && this.progressBarOutline) {
+            this.progressBarBg.setPosition(barX, barY).setSize(barWidth, barHeight);
+            this.progressBarFill.setPosition(barX, barY);
+            this.progressBarFill.width = (this.score / 10) * barWidth;
+            this.progressBarLabel.setPosition(barX, barY - 30);
 
-        this.progressBarOutline.clear();
-        this.progressBarOutline.lineStyle(3, 0xffffff, 1);
-        this.progressBarOutline.strokeRect(barX, barY, barWidth, barHeight);
+            this.progressBarOutline.clear();
+            this.progressBarOutline.lineStyle(3, 0xffffff, 1);
+            this.progressBarOutline.strokeRect(barX, barY, barWidth, barHeight);
+        }
     }
 
     onResults(results) {
@@ -110,6 +136,9 @@ export default class CameraScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        if (this.hasTransitioned) {
+            return;
+        }
         const { width, height } = this.scale;
 
         if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
@@ -163,19 +192,10 @@ export default class CameraScene extends Phaser.Scene {
                     this.hasTransitioned = true;
                     this.score = 0;
 
-                    // Stop camera feed and clean up
-                    if (this.cameraFeed && typeof this.cameraFeed.stop === 'function') {
-                        this.cameraFeed.stop();
-                    }
+                    this.cleanup();
 
-                    if (this.video) {
-                        this.video.pause();
-                        this.video.srcObject = null;
-                        this.video.remove();
-                        this.video = null;
-                    }
-
-                    this.scene.start('MenuScene');
+                    this.scene.stop();
+                    this.scene.start('VideoScene1');
                 }
             }
 
@@ -205,14 +225,6 @@ export default class CameraScene extends Phaser.Scene {
 
     shutdown() {
         // Called when scene is stopped or switched
-        if (this.cameraFeed && typeof this.cameraFeed.stop === 'function') {
-            this.cameraFeed.stop();
-        }
-        if (this.video) {
-            this.video.pause();
-            this.video.srcObject = null;
-            this.video.remove();
-            this.video = null;
-        }
+        this.cleanup();
     }
 }
