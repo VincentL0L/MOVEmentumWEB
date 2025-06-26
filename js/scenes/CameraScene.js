@@ -163,7 +163,7 @@ export default class CameraScene extends Phaser.Scene {
                 this.catSprite.setPosition(cx, cy);
             }
 
-            const fingerIndices = [4, 20, 22, 8, 21, 23];
+            const fingerIndices = [16, 17, 18, 19, 20, 21, 22];
 
             const fingersPositions = fingerIndices.map(i => {
                 const kp = this.keypoints[i];
@@ -202,8 +202,8 @@ export default class CameraScene extends Phaser.Scene {
             this.poseGraphics.clear();
 
             this.poseGraphics.fillStyle(0x00ff00, 1);
-            // Draw only the six finger keypoints
-            const fingerIndicesToDraw = [4, 20, 22, 8, 21, 23];
+            // Draw only the seven finger keypoints
+            const fingerIndicesToDraw = [16, 17, 18, 19, 20, 21, 22];
             fingerIndicesToDraw.forEach(i => {
                 const kp = this.keypoints[i];
                 if (kp && kp.visibility > 0.1) {

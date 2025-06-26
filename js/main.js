@@ -20,4 +20,4 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-game.scene.start('MenuScene');
+game.scene.start('CameraScene');
