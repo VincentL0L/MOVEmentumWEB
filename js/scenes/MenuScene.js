@@ -50,7 +50,7 @@ export default class MenuScene extends Phaser.Scene {
             this.titleText.setPosition(width / 2, 150);
         }
 
-        this.playButton.setPosition(width / 2, height / 2 + 100);
-        this.playText.setPosition(width / 2, height / 2 + 100);
+        this.playButton.setPosition(width / 2, height / 2 + 25);
+        this.playText.setPosition(width / 2, height / 2 + 25);
     }
 }
