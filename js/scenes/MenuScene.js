@@ -23,8 +23,8 @@ export default class MenuScene extends Phaser.Scene {
         // }).setOrigin(0.5);
 
         // Create PLAY button
-        this.playButton = this.add.rectangle(width / 2, height / 2 + 200, 200, 80, 0x4682B4);
-        this.playText = this.add.text(width / 2, height / 2 + 200, 'PLAY', {
+        this.playButton = this.add.rectangle(width / 2, height / 2, 200, 80, 0x4682B4);
+        this.playText = this.add.text(width / 2, height / 2, 'PLAY', {
             fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Arial'
@@ -50,7 +50,7 @@ export default class MenuScene extends Phaser.Scene {
             this.titleText.setPosition(width / 2, 150);
         }
 
-        this.playButton.setPosition(width / 2, height / 2 + 200);
-        this.playText.setPosition(width / 2, height / 2 + 200);
+        this.playButton.setPosition(width / 2, height / 2 + 100);
+        this.playText.setPosition(width / 2, height / 2 + 100);
     }
 }
