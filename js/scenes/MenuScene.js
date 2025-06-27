@@ -33,7 +33,7 @@ export default class MenuScene extends Phaser.Scene {
         this.playButton.setInteractive({ useHandCursor: true });
         this.playButton.on('pointerdown', () => {
             //localStorage.setItem('currentScene', 'Scene1');
-            this.scene.start('Scene1');
+            this.scene.start('CameraScene');
         });
 
         // Handle resize
